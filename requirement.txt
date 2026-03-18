@@ -1,0 +1,9 @@
+streamlit
+fastapi
+uvicorn
+google-generativeai
+python-dotenv
+requests
+email-validator
+python-multipart
+typing-extensions
