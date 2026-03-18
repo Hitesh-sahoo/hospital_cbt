@@ -3,7 +3,8 @@ import requests
 
 st.set_page_config(page_title="🏥 Hospital Chatbot", page_icon="🤖", layout="centered")
 
-API_URL = "http://127.0.0.1:8000"
+API_URL ="https://hospital-api-1uen.onrender.com"
+#old="http://127.0.0.1:8000"
 
 st.sidebar.title("⚙️ Settings")
 theme = st.sidebar.radio("Choose Theme", ["🌞 Light", "🌙 Dark"])
