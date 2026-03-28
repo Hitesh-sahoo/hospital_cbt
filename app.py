@@ -42,7 +42,11 @@ if not st.session_state.logged_in:
                     st.success(data.get("message"))
                     st.rerun()
                 else:
-                    st.error("Invalid login or server issue")
+                    try:
+                        err = response.json().get("message")
+                    except:
+                        err = response.text
+                    st.error(err)
 
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -59,7 +63,7 @@ if not st.session_state.logged_in:
             try:
                 response = requests.post(
                     f"{API_URL}/register",
-                    data={
+                    data={   # ✅ IMPORTANT: Form data (matches backend)
                         "name": name,
                         "email": reg_email,
                         "password": reg_password,
@@ -68,9 +72,13 @@ if not st.session_state.logged_in:
                 )
 
                 if response.status_code == 200:
-                    st.success("Registration successful")
+                    st.success("✅ Registration successful! Please login.")
                 else:
-                    st.error("Registration failed")
+                    try:
+                        err = response.json().get("message")
+                    except:
+                        err = response.text
+                    st.error(err)
 
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -93,7 +101,7 @@ if st.session_state.logged_in:
         try:
             response = requests.post(
                 f"{API_URL}/chatbot",
-                data={
+                params={   # ✅ IMPORTANT: backend uses Query(...)
                     "symptoms": user_input,
                     "patient_id": st.session_state.patient_id
                 }
@@ -103,7 +111,7 @@ if st.session_state.logged_in:
                 data = response.json()
                 bot_reply = data.get("message", "No reply")
             else:
-                bot_reply = "Server error or empty response"
+                bot_reply = "⚠️ Server error or waking up, try again."
 
         except Exception as e:
             bot_reply = f"Error: {e}"
@@ -125,10 +133,11 @@ if st.session_state.logged_in:
                 if "appointments" in data:
                     for appt in data["appointments"]:
                         st.write(
-                            f"Dr. {appt['doctor_name']} | {appt['date']} {appt['time']}"
+                            f"Dr. {appt['doctor_name']} ({appt['specialization']}) | "
+                            f"{appt['date']} {appt['time']}"
                         )
                 else:
-                    st.info("No appointments found")
+                    st.info(data.get("message", "No appointments found"))
 
             else:
                 st.error("Error fetching appointments")
